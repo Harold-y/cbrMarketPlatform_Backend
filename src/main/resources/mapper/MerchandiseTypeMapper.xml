@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chengbing.dao.MerchandiseTypeMapper">
+    <resultMap id="BaseResultMap" type="org.chengbing.entity.MerchandiseType">
+        <id column="merch_type_id" property="MerchTypeId"/>
+        <result column="merch_gen_type_id" property="merchGenTypeId"/>
+        <result column="merch_type_name" property="merchTypeName"/>
+    </resultMap>
+
+    <select id="selectPageMerchandiseType" resultType="map">
+        select
+            merch_type_id, mt.merch_gen_type_id,mgt.merch_gen_type_name, merch_type_name
+        from
+            merchandise_type as mt, merchandise_gen_type as mgt
+        where
+            mt.merch_gen_type_id = mgt.merch_gen_type_id
+    </select>
+
+    <insert id="insertMerchandiseType" parameterType="org.chengbing.entity.MerchandiseType">
+        insert into merchandise_type(merch_gen_type_id, merch_type_name) values (#{merchGenTypeId}, #{merchTypeName})
+    </insert>
+
+    <select id="searchMerchandiseType" resultType="map">
+        select
+            merch_type_id, mt.merch_gen_type_id,mgt.merch_gen_type_name, merch_type_name
+        from
+            merchandise_type as mt, merchandise_gen_type as mgt
+        where
+            merch_type_name like concat('%', #{searchContent}, '%') and mt.merch_gen_type_id = mgt.merch_gen_type_id
+    </select>
+
+    <select id="selectPageMerchandiseTypeById" resultType="map">
+        select
+            merch_type_id, mt.merch_gen_type_id,mgt.merch_gen_type_name, merch_type_name
+        from
+            merchandise_type as mt, merchandise_gen_type as mgt
+        where
+            mt.merch_gen_type_id = mgt.merch_gen_type_id and merch_type_id = #{merchTypeId}
+    </select>
+</mapper>

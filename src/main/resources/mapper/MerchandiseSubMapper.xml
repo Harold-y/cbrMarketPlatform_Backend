@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chengbing.dao.MerchandiseSubMapper">
+
+    <resultMap id="BaseResultMap" type="org.chengbing.entity.MerchandiseSub">
+        <id column="merch_sub_id" property="merchSubId"/>
+        <result column="merch_id" property="merchId"/>
+        <result column="merch_sub_name" property="merchSubName"/>
+        <result column="merch_sub_price" property="merchSubPrice"/>
+        <result column="merch_sub_onsale_price" property="merchSubOnsalePrice"/>
+        <result column="merch_sub_status" property="merchSubStatus"/>
+        <result column="merch_sub_photo_url" property="merchSubPhotoUrl"/>
+        <result column="merch_sub_remaining" property="merchSubRemaining"/>
+        <result column="merch_sub_create_date" property="merchSubCreateDate"/>
+        <result column="merch_sub_onsale_end_date" property="merchSubOnsaleEndDate"/>
+    </resultMap>
+
+    <select id="selectMerchandiseSub" resultMap="BaseResultMap">
+        select
+            merch_sub_id, merch_id, merch_sub_name, merch_sub_price, merch_sub_onsale_price, merch_sub_status, merch_sub_photo_url, merch_sub_remaining, merch_sub_create_date, merch_sub_onsale_end_date
+        from
+            merchandise_sub
+        where
+            merch_id = #{merchId}
+    </select>
+
+    <insert id="insertMerchandiseSub" parameterType="org.chengbing.entity.MerchandiseSub">
+        insert into
+            merchandise_sub (merch_id, merch_sub_name, merch_sub_price, merch_sub_status, merch_sub_photo_url, merch_sub_remaining, merch_sub_create_date)
+        values
+            (#{merchId}, #{merchSubName}, #{merchSubPrice}, #{merchSubStatus}, #{merchSubPhotoUrl}, #{merchSubRemaining}, #{merchSubCreateDate})
+
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select
+            merch_sub_id, merch_id, merch_sub_name, merch_sub_price, merch_sub_onsale_price, merch_sub_status, merch_sub_photo_url, merch_sub_remaining, merch_sub_create_date, merch_sub_onsale_end_date
+        from
+            merchandise_sub
+        where
+            merch_sub_id = #{merchSubId}
+    </select>
+
+    <update id="updateMerchandiseSub" parameterType="org.chengbing.entity.MerchandiseSub">
+        update
+            merchandise_sub
+        set
+            merch_sub_name = #{merchSubName}, merch_sub_price = #{merchSubPrice}, merch_sub_onsale_price = #{merchSubOnsalePrice}, merch_sub_remaining = #{merchSubRemaining}, merch_sub_onsale_end_date = #{merchSubOnsaleEndDate}
+        where
+            merch_sub_id = #{merchSubId}
+    </update>
+
+    <update id="updatePhotoUrl">
+        update
+            merchandise_sub
+        set
+            merch_sub_photo_url = #{merchSubPhotoUrl}
+        where
+            merch_sub_id = #{merchSubId}
+    </update>
+
+    <update id="inactivateSub">
+        update
+            merchandise_sub
+        set
+            merch_sub_status = 0
+        where
+            merch_sub_id = #{merchSubId}
+    </update>
+
+    <update id="reactivateSub">
+        update
+            merchandise_sub
+        set
+            merch_sub_status = 1
+        where
+            merch_sub_id = #{merchSubId}
+    </update>
+
+    <select id="selectPersonnelToAuth" resultType="int">
+        select personnel_id from merchandise as m, merchandise_sub as ms where m.merch_id  = ms.merch_id and ms.merch_sub_id = #{merchSubId}
+    </select>
+
+    <select id="selectUrl" resultType="String">
+        select merch_sub_photo_url from merchandise_sub as ms  where ms.merch_sub_id = #{merchSubId}
+    </select>
+
+
+</mapper>

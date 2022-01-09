@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chengbing.dao.RegionMapper">
+
+    <resultMap id="BaseResultMap" type="org.chengbing.entity.Region">
+        <id column="region_id" property="regionId"/>
+        <result column="region_name" property="regionName"/>
+        <result column="region_shortname" property="regionShortname"/>
+    </resultMap>
+
+    <select id="selectPageRegion" resultMap="BaseResultMap">
+        select
+            region_id, region_name, region_shortname
+        from
+            region
+    </select>
+
+    <insert id="insertRegion" parameterType="org.chengbing.entity.Region">
+        insert into region(region_name, region_shortname) values (#{regionName}, #{regionShortname})
+    </insert>
+
+    <select id="searchRegion" resultMap="BaseResultMap">
+        select
+            region_id, region_name, region_shortname
+        from
+            region
+        where
+            region_name like concat('%', #{searchContent}, '%')
+    </select>
+</mapper>
