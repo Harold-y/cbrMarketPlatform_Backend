@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chengbing.dao.PersonnelTypeMapper">
+    <resultMap id="BaseResultMap" type="org.chengbing.entity.PersonnelType">
+        <id column="personnel_type_id" property="personnelTypeId"/>
+        <result column="personnel_type_name" property="personnelTypeName"/>
+    </resultMap>
+
+    <select id="selectPagePersonnelType" resultMap="BaseResultMap">
+        select
+            personnel_type_id, personnel_type_name
+        from
+            personnel_type
+    </select>
+
+    <insert id="insertPersonnelType" parameterType="org.chengbing.entity.PersonnelType">
+        insert into personnel_type(personnel_type_name) values (#{personnelTypeName})
+    </insert>
+
+    <select id="searchPersonnelType" resultMap="BaseResultMap">
+        select
+            personnel_type_id, personnel_type_name
+        from
+            personnel_type
+        where
+            personnel_type_name like concat('%', #{searchContent}, '%')
+    </select>
+
+    <select id="selectAuthByPersonnelTypeId" resultType="map">
+        select
+            a.auth_id, a.auth_name, a.auth_note
+        from
+             personnel_type as p, authen_normal as a, personnel_auth as pa
+        where
+            p.personnel_type_id = pa.personnel_type_id and pa.auth_id = a.auth_id and p.personnel_type_id = #{personnelTypeId}
+    </select>
+
+    <insert id="insertPersonnelAuth" parameterType="org.chengbing.entity.PersonnelAuth">
+        insert into personnel_auth(auth_id, personnel_type_id) values (#{authId}, #{personnelTypeId})
+    </insert>
+
+    <delete id="deletePersonnelAuth">
+        delete
+        from
+             personnel_auth
+        where
+            auth_id = #{authId} and personnel_type_id = #{personnelTypeId}
+    </delete>
+
+</mapper>

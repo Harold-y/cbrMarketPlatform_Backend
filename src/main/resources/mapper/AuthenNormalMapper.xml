@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chengbing.dao.AuthenNormalMapper">
+    <resultMap id="BaseResultMap" type="org.chengbing.entity.AuthenNormal">
+        <id column="auth_id" property="authId"/>
+        <result column="auth_name" property="authName"/>
+        <result column="auth_note" property="authNote"/>
+    </resultMap>
+
+    <resultMap id="authenItemMap" type="org.chengbing.entity.AuthenItem">
+        <id column="auth_item_id" property="authItemId"/>
+        <result column="auth_item_name" property="authItemName"/>
+        <result column="auth_item_description" property="authItemDescription"/>
+    </resultMap>
+
+    <select id="selectPageAuthenNormal" resultMap="BaseResultMap">
+        select
+            auth_id, auth_name, auth_note
+        from
+            authen_normal
+    </select>
+
+    <insert id="insertAuthenNormal" parameterType="org.chengbing.entity.AuthenNormal">
+        insert into authen_normal(auth_name, auth_note) values (#{authName}, #{authNote})
+    </insert>
+
+    <select id="searchAuthenNormal" resultMap="BaseResultMap">
+        select
+            auth_id, auth_name, auth_note
+        from
+            authen_normal
+        where
+            auth_name like concat('%', #{searchContent}, '%') or auth_note like concat('%', #{searchContent}, '%')
+    </select>
+
+    <select id="selectAffiliation" resultType="map">
+        select
+            auth_item_id, auth_item_name, auth_item_description
+        from
+            authen_item, authen_normal, authen_clearance
+        where
+            authen_item.auth_item_id = authen_clearance.authen_item_id and authen_clearance.authen_id = authen_normal.auth_id
+            and auth_id = #{authId}
+    </select>
+
+    <insert id="insertClearance" parameterType="org.chengbing.entity.AuthenClearance">
+        insert into authen_clearance(authen_id, authen_item_id) values (#{authenId}, #{authenItemId})
+    </insert>
+
+    <delete id="deleteClearance">
+        delete from authen_clearance where authen_id = #{authenId} and authen_item_id = #{authenItemId}
+    </delete>
+</mapper>

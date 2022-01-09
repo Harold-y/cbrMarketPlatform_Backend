@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chengbing.dao.MerchandiseMapper">
+    <select id="selectPageMerchandise" resultType="map">
+        select
+            merch_id, mt.merch_type_id,mt.merch_type_name, merch_name
+        from
+            merchandise_type as mt, merchandise as m
+        where
+            mt.merch_type_id = m.merch_type_id
+    </select>
+
+    <select id="selectFolder" resultType="String">
+        select
+            merch_photo_folder
+        from
+            merchandise as m
+        where
+            m.merch_id = #{merchId}
+    </select>
+
+    <select id="selectImageSet" resultType="String">
+        select
+            merch_photo_set
+        from
+            merchandise as m
+        where
+            m.merch_id = #{merchId}
+    </select>
+
+    <update id="updatePhotoSet">
+        update merchandise set merch_photo_set = #{merchPhotoSet} where merch_id = #{merchId}
+    </update>
+
+    <insert id="insertMerchandise" parameterType="org.chengbing.entity.Merchandise">
+        insert into merchandise(merch_type_id, merch_name, merch_photo_folder, merch_create_date, merch_status, merch_special, personnel_id)
+         values (#{merchTypeId}, #{merchName}, #{merchPhotoFolder},#{merchCreateDate}, #{merchStatus}, #{merchSpecial}, #{personnelId})
+    </insert>
+
+    <select id="searchMerchandise" resultType="map">
+        select
+            merch_id, mt.merch_type_id,mt.merch_type_name, merch_name
+        from
+            merchandise_type as mt, merchandise as m
+        where
+            mt.merch_type_id = m.merch_type_id and merch_name like concat('%', #{searchContent}, '%')
+    </select>
+
+    <select id="selectPageMerchandiseById" resultType="map">
+        select
+            merch_id, mt.merch_type_id,mt.merch_type_name, merch_name,merch_photo_folder,merch_create_date,merch_status,merch_year_sale_stat,merch_special
+        from
+            merchandise_type as mt, merchandise as m
+        where
+            mt.merch_type_id = m.merch_type_id and merch_id = #{merchId}
+    </select>
+    <update id="inactivateMerchandise">
+        update merchandise set merch_status = -1 where merch_id = #{merchId}
+    </update>
+
+    <select id="selectDescriptionImgNum" resultType="int">
+        select description from merchandise where merch_id = #{merchId}
+    </select>
+
+    <update id="updateDescriptionImgNum">
+        update merchandise set description = #{num}  where merch_id = #{merchId}
+    </update>
+
+    <update id="deleteDescriptionImgNum">
+        update merchandise set description = 0  where merch_id = #{merchId}
+    </update>
+
+    <select id="selectDescription" resultType="String">
+        select merch_description from merchandise where merch_id = #{merchId}
+    </select>
+
+    <update id="updateDescription">
+        update merchandise set merch_description = #{description} where merch_id = #{merchId}
+    </update>
+
+    <select id="selectUserIdByMerchId" resultType="Integer">
+        select personnel_id from merchandise where merch_id = #{merchId}
+    </select>
+
+    <select id="selectPageMerchandiseSeller" resultType="map">
+        select
+            merch_id, mt.merch_type_id,mt.merch_type_name, merch_name
+        from
+            merchandise_type as mt, merchandise as m
+        where
+            mt.merch_type_id = m.merch_type_id and m.personnel_id = #{personnelId}
+    </select>
+
+    <select id="searchMerchandiseSeller" resultType="map">
+        select
+            merch_id, mt.merch_type_id,mt.merch_type_name, merch_name
+        from
+            merchandise_type as mt, merchandise as m
+        where
+            mt.merch_type_id = m.merch_type_id and merch_name like concat('%', #{searchContent}, '%') and personnel_id = #{personnelId}
+    </select>
+
+    <select id="selectMainPage" resultType="map">
+        select md.merch_id, md.merch_name, md.merch_photo_folder, md.merch_photo_set, md.merch_year_sale_stat, p.personnel_first_name, p.personnel_last_name, p.personnel_id, minprice from
+                                                                                                                                                                                           (select merch_id, min(merch_sub_price) minprice
+                                                                                                                                                                                            from merchandise_sub sub
+                                                                                                                                                                                            where merch_id in (
+                                                                                                                                                                                                               floor(rand()*(select count(*) from merchandise)+6),
+                                                                                                                                                                                                               floor(rand()*(select count(*) from merchandise)+6),
+                                                                                                                                                                                                               floor(rand()*(select count(*) from merchandise)+6),
+                                                                                                                                                                                                               floor(rand()*(select count(*) from merchandise)+6)
+                                                                                                                                                                                                )
+                                                                                                                                                                                            group by merch_id
+                                                                                                                                                                                                limit 4) as mprice,merchandise md, personnel p
+        where mprice.merch_id=md.merch_id and md.personnel_id = p.personnel_id
+    </select>
+
+    <select id="selectMainPageBySaleAmount" resultType="map">
+        select md.merch_id, md.merch_name, md.merch_photo_folder, md.merch_photo_set, md.merch_year_sale_stat, p.personnel_first_name, p.personnel_last_name, p.personnel_id from merchandise md, personnel p
+        where md.personnel_id = p.personnel_id
+        order by merch_year_sale_stat+0 DESC limit 10
+    </select>
+
+    <select id="selectMinPrice" resultType="double">
+        select min(merch_sub_price) minprice from merchandise_sub where merch_id = #{merchId}
+    </select>
+
+</mapper>

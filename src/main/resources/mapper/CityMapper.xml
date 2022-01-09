@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chengbing.dao.CityMapper">
+
+    <select id="selectPageCity" resultType="Map">
+        select
+            city.city_id, state.state_id, region.region_id, region.region_name, state.state_name, city.city_name
+        from
+            region, state, city
+        where
+            state.region_id = region.region_id and city.state_id = state.state_id
+    </select>
+
+    <select id="selectCityById" resultType="Map">
+        select
+            city.city_id, state.state_id, region.region_id, region.region_name, state.state_name, city.city_name
+        from
+            region, state, city
+        where
+            state.region_id = region.region_id and city.state_id = state.state_id and city.city_id = #{cityId}
+    </select>
+
+    <select id="searchCity" resultType="Map">
+        select
+            city.city_id, state.state_id, region.region_id, region.region_name, state.state_name, city.city_name
+        from
+            region, state, city
+        where
+            state.region_id = region.region_id and city.state_id = state.state_id and city_name like concat('%', #{searchContent}, '%')
+    </select>
+</mapper>

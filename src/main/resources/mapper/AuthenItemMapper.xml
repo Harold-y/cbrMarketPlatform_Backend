@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chengbing.dao.AuthenItemMapper">
+    <resultMap id="BaseResultMap" type="org.chengbing.entity.AuthenItem">
+        <id column="auth_item_id" property="authItemId"/>
+        <result column="auth_item_name" property="authItemName"/>
+        <result column="auth_item_description" property="authItemDescription"/>
+    </resultMap>
+
+    <select id="selectPageAuthenItem" resultMap="BaseResultMap">
+        select
+            auth_item_id, auth_item_name, auth_item_description
+        from
+            authen_item
+    </select>
+
+    <insert id="insertAuthenItem" parameterType="org.chengbing.entity.AuthenItem">
+        insert into authen_item(auth_item_name, auth_item_description) values (#{authItemName}, #{authItemDescription})
+    </insert>
+
+    <select id="searchAuthenItem" resultMap="BaseResultMap">
+        select
+            auth_item_id, auth_item_name, auth_item_description
+        from
+            authen_item
+        where
+            auth_item_name like concat('%', #{searchContent}, '%') or auth_item_description like concat('%', #{searchContent}, '%')
+    </select>
+</mapper>

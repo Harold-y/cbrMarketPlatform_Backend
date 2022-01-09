@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.chengbing.dao.PersonnelMapper">
+    <resultMap id="BaseResultMap" type="org.chengbing.entity.Personnel">
+        <id column="personnel_id" property="personnelId"/>
+        <result column="personnel_status" property="personnelStatus"/>
+        <result column="personnel_type_id" property="personnelTypeId"/>
+        <result column="personnel_first_name" property="personnelFirstName"/>
+        <result column="personnel_mid_name" property="personnelMidName"/>
+        <result column="personnel_last_name" property="personnelLastName"/>
+        <result column="personnel_enroll_time" property="personnelEnrollTime" jdbcType="DATE"/>
+        <result column="personnel_resign_time" property="personnelResignTime" jdbcType="DATE"/>
+        <result column="personnel_email" property="personnelEmail"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap2" type="org.chengbing.entity.Personnel">
+        <id column="personnel_id" property="personnelId"/>
+        <result column="personnel_status" property="personnelStatus"/>
+        <result column="personnel_type_id" property="personnelTypeId"/>
+        <result column="personnel_first_name" property="personnelFirstName"/>
+        <result column="personnel_mid_name" property="personnelMidName"/>
+        <result column="personnel_last_name" property="personnelLastName"/>
+        <result column="personnel_email" property="personnelEmail"/>
+    </resultMap>
+
+    <select id="selectPagePersonnel" resultMap="BaseResultMap">
+        select
+            personnel_id, personnel_status, personnel_type_id, personnel_first_name, personnel_mid_name, personnel_last_name, personnel_enroll_time, personnel_resign_time, personnel_email
+        from
+            personnel
+    </select>
+
+    <select id="selectPersonnelById" resultMap="BaseResultMap2">
+        select
+            personnel_id, personnel_status, personnel_type_id, personnel_first_name, personnel_mid_name, personnel_last_name, personnel_email
+        from
+            personnel
+        where personnel_id = #{personnelId}
+    </select>
+
+    <select id="selectPersonnelProfileById" resultType="map">
+        select personnel_status, personnel_first_name, personnel_mid_name, personnel_last_name, personnel_email, personnel_enroll_time, personnel_type_name
+        from personnel as p, personnel_type as pt
+        where personnel_id = #{personnelId} and p.personnel_type_id = pt.personnel_type_id
+    </select>
+
+    <update id="updatePersonnelProfileName">
+        update personnel
+        set
+           personnel_first_name = #{personnelFirstName}, personnel_mid_name = #{personnelMidName}, personnel_last_name = #{personnelLastName}
+        where
+            personnel_id = #{personnelId}
+    </update>
+
+    <update id="updatePersonnelEmail">
+        update personnel
+        set
+            personnel_email = #{personnelEmail}
+        where
+            personnel_id = #{personnelId}
+    </update>
+
+    <update id="updatePersonnelById">
+        update personnel
+        set
+            personnel_id = #{personnelId}, personnel_status = #{personnelStatus}, personnel_type_id = #{personnelTypeId}, personnel_first_name = #{personnelFirstName},
+            personnel_mid_name = #{personnelMidName}, personnel_last_name = #{personnelLastName}, personnel_email = #{personnelEmail}, personnel_resign_time = #{personnelResignTime}
+        where
+            personnel_id = #{personnelId}
+    </update>
+
+    <select id="selectPasswordByPersonnelId" resultType="string">
+        select personnel_password from personnel where personnel_id = #{personnelId}
+    </select>
+    <update id="updatePasswordByPersonnelId">
+        update personnel set personnel_password = #{personnelPassword} where personnel_id = #{personnelId}
+    </update>
+
+    <insert id="insertPersonnel" parameterType="org.chengbing.entity.Personnel">
+        insert into personnel(personnel_status, personnel_type_id, personnel_first_name, personnel_mid_name, personnel_last_name, personnel_enroll_time, personnel_email, personnel_password)
+         values
+                (#{personnelStatus}, #{personnelTypeId}, #{personnelFirstName}, #{personnelMidName}, #{personnelLastName}, #{personnelEnrollTime}, #{personnelEmail}, #{personnelPassword})
+    </insert>
+
+    <select id="searchPersonnel" resultMap="BaseResultMap">
+        select
+            personnel_id, personnel_status, personnel_type_id, personnel_first_name, personnel_mid_name, personnel_last_name, personnel_enroll_time, personnel_resign_time, personnel_email
+        from
+            personnel
+        where
+            personnel_first_name like concat('%', #{searchContent}, '%') or personnel_mid_name like concat('%', #{searchContent}, '%') or personnel_last_name like concat('%', #{searchContent}, '%')
+    </select>
+    <select id="personnelLogIn" resultType="int">
+        select personnel_id from personnel where personnel_email = #{personnelEmail} and personnel_password = #{personnelPassword} and personnel_status = '1'
+    </select>
+    <select id="personnelAuth" resultType="String">
+        select auth_item_name
+        from authen_item as ai, authen_clearance as ac, personnel_auth as pa, personnel as p where ai.auth_item_id = ac.authen_item_id and ac.authen_id = pa.auth_id and pa.personnel_type_id = p.personnel_type_id
+        and p.personnel_id = #{personnelId}
+    </select>
+</mapper>
