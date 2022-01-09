@@ -6,6 +6,8 @@
 
 The CBR Market Platform designs for the online market financial people. Currently under construction. it uses Spring Boot as the Backend and React.js + Material UI as the Frontend. This part belongs to the backend development.
 
+#### For more info about frontend and other project info: https://github.com/Harold-y/cbrMarketPlatform_Frontend
+
 ## More Information about Backend and the Database:
 
 - The backend uses Maven as the dependency control tool. 
